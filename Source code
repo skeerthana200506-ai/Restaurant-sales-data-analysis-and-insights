@@ -1,0 +1,79 @@
+# RESTAURANT SALES ANALYSIS PROJECT – FULL CODE
+# Step 1: Import Libraries
+Import pandas as pd
+Import matplotlib.pyplot as plt
+Import seaborn as sns
+
+Improve plot style
+Sns.set(style=’whitegrid’, palette=’muted’, font_scale=1.1)
+
+# Step 2: Load CSV
+Df = pd.read_csv(r’C:\Users\Admin\Desktop\Restaurent_Sales_Analysis\restaurant_data.csv’) #  full path
+
+# Step 3: Explore Data
+Print(“----- HEAD -----“)
+Print(df.head())
+
+Print(“\n----- INFO -----“)
+Print(df.info())
+
+Print(“\n----- DESCRIBE -----“)
+Print(df.describe())
+
+Print(“\n----- Check Missing Values -----“)
+Print(df.isnull().sum())
+
+# Step 4: Data Cleaning
+# Drop rows with missing Feedback Score or Favorite Dish
+Df = df.dropna(subset=[‘Feedback Score (1-5)’, ‘Favorite Dish’])
+
+# Fill missing Amount Spent with median (if any)
+Df[‘AMOUNT SPENT ON THAT DAY(20/10/2024)’] = df[‘AMOUNT SPENT ON THAT DAY(20/10/2024)’].fillna(Df[‘AMOUNT SPENT ON THAT DAY(20/10/2024)’].median())
+
+# Step 5: Graphs & Visualizations
+
+# 5.1 Count of Favorite Dishes
+Plt.figure(figsize=(10,5))
+Sns.countplot(data=df, x=’Favorite Dish’, order=df[‘Favorite Dish’].value_counts().index)
+Plt.xticks(rotation=45)
+Plt.title(‘Number of Orders per Favorite Dish’)
+Plt.show()
+
+# 5.2 Average Feedback Score per Favorite Dish
+Plt.figure(figsize=(10,5))
+Sns.barplot Data=df, X=’Favorite Dish’, Y=’Feedback Score (1-5)’,
+Order=df.groupby(‘Favorite Dish’)[‘Feedback Score (1-5)’].mean().sort_values(ascending=False).index)
+Plt.xticks(rotation=45)
+Plt.title(‘Average Feedback Score per Favorite Dish’)
+Plt.show()
+
+# 5.3 Amount Spent vs Feedback Score Scatter
+Plt.figure(figsize=(8,5))
+Sns.scatterplot(Data=df, X=’AMOUNT SPENT ON THAT DAY(20/10/2024)’,
+Y=’Feedback Score (1-5)’, Hue=’Favorite Dish', alpha=0.7)
+plt.title('Amount Spent vs Feedback Score by Dish')
+plt.show()
+
+# 5.4 Top 10 Users by Feedback Score
+top_users = df.sort_values(by='Feedback Score (1-5)', ascending=False).head(10)
+plt.figure(figsize=(10,5))
+sns.barplot(data=top_users, x='USER ID', y='Feedback Score (1-5)', hue='Favorite Dish', dodge=False)
+plt.xticks(rotation=45)
+plt.title('Top 10 Users by Feedback Score')
+plt.show()
+
+# 5.5 Correlation Heatmap (Numeric Columns)
+plt.figure(figsize=(8,6))
+sns.heatmap(df[['AMOUNT SPENT ON THAT DAY(20/10/2024)', 'Feedback Score (1-5)']].corr(),
+annot=True, cmap='coolwarm', fmt='.2f')
+plt.title('Correlation Heatmap')
+plt.show()
+
+# Step 6: Insights / Analysis
+print("\n----- Insights -----")
+print("1. Total Orders:", df.shape[0])
+print("2. Different Dishes Ordered:", df['Favorite Dish'].nunique())
+print("3. Highest Feedback Score User:", df.loc[df['Feedback Score (1-5)'].idxmax()]['USER ID'])
+print("4. Lowest Feedback Score User:", df.loc[df['Feedback Score (1-5)'].idxmin()]['USER ID'])
+print("5. Average Amount Spent:", round(df['AMOUNT SPENT ON THAT DAY(20/10/2024)'].mean(),2))
+print("6. Average Feedback Score:", round(df['Feedback Score (1-5)'].mean(),2))
